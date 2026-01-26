@@ -47,18 +47,18 @@ if __name__ == "__main__":
     timestamp = args.timestamp
     print(f"Timestamp received from GitHub Actions: {timestamp}")
 
-    # 1) Load dataset
+    # Load dataset
     data = load_breast_cancer()
     X, y = data.data, data.target
 
-    # 2) Save dataset artifacts into src/data
+    # Save dataset artifacts into src/data
     os.makedirs(DATA_DIR, exist_ok=True)
     with open(os.path.join(DATA_DIR, "data.pickle"), "wb") as f:
         pickle.dump(X, f)
     with open(os.path.join(DATA_DIR, "target.pickle"), "wb") as f:
         pickle.dump(y, f)
 
-    # 3) Train/Val/Test split
+    # Train/Val/Test split
     X_train, X_temp, y_train, y_temp = train_test_split(
         X, y, test_size=0.30, random_state=0, stratify=y
     )
@@ -66,7 +66,7 @@ if __name__ == "__main__":
         X_temp, y_temp, test_size=0.50, random_state=0, stratify=y_temp
     )
 
-    # 4) Model pipeline
+    # Model pipeline
     model = Pipeline(
         steps=[
             ("scaler", StandardScaler()),
@@ -74,7 +74,7 @@ if __name__ == "__main__":
         ]
     )
 
-    # 5) MLflow setup (save into src/mlruns)
+    # MLflow setup (save into src/mlruns)
     os.makedirs(MLRUNS_DIR, exist_ok=True)
     mlflow.set_tracking_uri(to_file_uri(MLRUNS_DIR))
 
@@ -114,7 +114,7 @@ if __name__ == "__main__":
             }
         )
 
-        # 6) Save model directly into Lab2/models with workflow expected name
+        # Save model directly into Lab2/models with workflow expected name
         os.makedirs(MODELS_DIR, exist_ok=True)
         model_filename = os.path.join(MODELS_DIR, f"model_{timestamp}_dt_model.joblib")
         dump(model, model_filename)
